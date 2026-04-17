@@ -383,40 +383,13 @@ def _pretty_print(report: dict):
     print(dumps(report, indent=2)[:500] + "...")
 
 if __name__ == "__main__":
-    samples = [
-        {
-            "job_url": "https://bit.ly/google-apply-now",
-            "company_claimed": "Google",
-            "recruiter_email": "hr.google.official@gmail.com",
-            "phone_number": "9999999999",
-            "salary_offered": 100000,
-            "offer_text": "CONGRATULATIONS! Immediate joining! Pay processing fee of $200 via Western Union. Act now!"
-        },
-        {
-            "job_url": "https://google.com/careers",
-            "company_claimed": "Google",
-            "recruiter_email": "recruiting@google.com",
-            "phone_number": "+1-650-253-0000",
-            "salary_offered": 150000,
-            "offer_text": "We are pleased to offer you a position as Software Engineer."
-        },
-        {
-            "job_url": "http://192.168.1.5/jobs",
-            "company_claimed": "Microsoft",
-            "recruiter_email": "jobs@micosoft-hr.com",
-            "phone_number": "12345678",
-            "salary_offered": 5000000,
-            "offer_text": "Urgent requirement! No experience required. 100% placement guaranteed. Telegram me here."
-        },
-        {
-            "job_url": "https://infosys-careers.xyz",
-            "company_claimed": "Infosys",
-            "recruiter_email": "hr.infosys@yopmail.com",
-            "phone_number": "1111111111",
-            "salary_offered": 7500000,
-            "offer_text": "Lottery prize! Click here to accept. Send security deposit to our bank account."
-        }
-    ]
-    for i, s in enumerate(samples, 1):
-        print(f"\n{'='*60}\nRunning Sample {i}\n{'='*60}")
-        _pretty_print(analyze(s))
+    # Quick smoke-test; actual user input is handled by the FastAPI endpoint in main.py
+    sample = {
+        "job_url": "https://bit.ly/google-apply-now",
+        "company_claimed": "Google",
+        "recruiter_email": "hr.google.official@gmail.com",
+        "phone_number": "9999999999",
+        "salary_offered": 100000,
+        "offer_text": "CONGRATULATIONS! Immediate joining! Pay processing fee of $200 via Western Union. Act now!"
+    }
+    _pretty_print(analyze(sample))
