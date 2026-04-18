@@ -12,12 +12,12 @@ app = FastAPI(
 )
 
 class AnalyzeRequest(BaseModel):
-    job_url: str = ""
-    recruiter_email: str = ""
-    company_claimed: str = ""
-    phone_number: str = ""
+    job_url: Optional[str] = ""
+    recruiter_email: Optional[str] = ""
+    company_claimed: Optional[str] = ""
+    phone_number: Optional[str] = ""
     salary_offered: Optional[float] = None
-    offer_text: str = ""
+    offer_text: Optional[str] = ""
 
 @app.post("/analyze", summary="Run full ScamShield analysis")
 def api_analyze(req: AnalyzeRequest):
@@ -27,9 +27,9 @@ def api_analyze(req: AnalyzeRequest):
     return analyze(req.model_dump())
 
 class CyberChecksRequest(BaseModel):
-    job_url: str = ""
-    recruiter_email: str = ""
-    company_claimed: str = ""
+    job_url: Optional[str] = ""
+    recruiter_email: Optional[str] = ""
+    company_claimed: Optional[str] = ""
 
 @app.post("/run_cyber_checks", summary="Run partial cyber checks")
 def api_run_cyber_checks(req: CyberChecksRequest):
