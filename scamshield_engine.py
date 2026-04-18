@@ -269,6 +269,15 @@ URL_SHORTENERS: Set[str] = {
     "linktr.ee", "beacons.ai",
 }
 
+# ── 1.5b  Trusted third-party job board domains (exempt from cross-field & typosquat checks) ──
+TRUSTED_JOB_BOARDS: Set[str] = {
+    "linkedin.com", "naukri.com", "indeed.com", "glassdoor.com",
+    "monster.com", "shine.com", "timesjobs.com", "foundit.in",
+    "instahyre.com", "cutshort.io", "wellfound.com", "angellist.com",
+    "internshala.com", "iimjobs.com", "hirist.com", "amazon.jobs",
+    "careers.wipro.com", "infosys.com", "careers.infosys.com",
+}
+
 # ── 1.6  Known scam / phishing hosting patterns in domain names ───────────
 SCAM_DOMAIN_KEYWORDS: List[str] = [
     "job-offer", "job-apply", "career-portal", "hiring-now",
@@ -588,6 +597,11 @@ def check_typosquat(data: dict) -> dict:
     if not domain or domain.lower() in {"n/a", "none", "unknown"}:
         return _skip("N/A")
 
+    # Skip if the job URL domain IS a trusted job board or the canonical domain
+    if any(domain == jb or domain.endswith("." + jb) for jb in TRUSTED_JOB_BOARDS) or domain == canonical:
+        return _clean(f"URL is a trusted job board or canonical domain ({domain}) — typosquat check skipped",
+                      "IMPERSONATION_RISK", 0.95)
+
     # Check against all known canonical domains, not just the claimed one
     best_match_score = 0
     best_match_name  = ""
@@ -656,12 +670,15 @@ def check_url_structure(data: dict) -> dict:
         penalties.append((5, f"Uses semi-suspicious TLD (.{tld})", 0.50))
 
     # Subdomain brand abuse: google.attacker.com
-    for known_name, known_domain in CANONICAL_COMPANY_DOMAINS.items():
-        brand_base = known_domain.rsplit(".", 1)[0]
-        for sub in subs:
-            if brand_base in sub or known_name.replace(" ", "") in sub:
-                penalties.append((35, f"Brand impersonation via subdomain: '{domain}'", 0.92))
-                break
+    # Skip this check entirely if the base domain is a trusted job board.
+    is_job_board_domain = any(domain == jb or domain.endswith("." + jb) for jb in TRUSTED_JOB_BOARDS)
+    if not is_job_board_domain:
+        for known_name, known_domain in CANONICAL_COMPANY_DOMAINS.items():
+            brand_base = known_domain.rsplit(".", 1)[0]
+            for sub in subs:
+                if brand_base in sub or known_name.replace(" ", "") in sub:
+                    penalties.append((35, f"Brand impersonation via subdomain: '{domain}'", 0.92))
+                    break
 
     # Domain name contains scam keywords
     for kw in SCAM_DOMAIN_KEYWORDS:
