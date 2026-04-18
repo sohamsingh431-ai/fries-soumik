@@ -1162,7 +1162,7 @@ def analyze(data: dict) -> dict:
         "confidence":    final_conf,
         "summary": (
             f"ScamShield v3.0 identified {len(flagged)} threat signal(s) across "
-            f"{len(correlations)} correlated pattern(s). Trust level: {risk}."
+            f"{len(correlations)} correlated pattern(s). Risk level: {risk}."
         ),
         "reasons":         reasons,
         "recommendations": recs,
